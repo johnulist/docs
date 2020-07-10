@@ -19,7 +19,8 @@ field from `OrderSignature` entity).
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -62,7 +63,8 @@ This mapping allows to use functions of `SignatureRepository` instead of only th
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -172,7 +174,8 @@ certain values (no autocomplete is provided).
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -243,7 +246,8 @@ final class Order
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -275,7 +279,8 @@ final class OrderCollection extends AbstractTypedCollection
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -343,7 +348,8 @@ in `src/Presenter/`:
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *
@@ -469,6 +475,7 @@ Lets add several methods to `DemoViewOrderHooks` class.
 `getModuleTemplatePath` - get's the path of the templates folder.
 
 ```php
+<?php
     /**
      * Get path to this module's template directory
      */
@@ -481,6 +488,7 @@ Lets add several methods to `DemoViewOrderHooks` class.
 Render a twig template method:
 
 ```php
+<?php
     /**
      * Render a twig template.
      */
@@ -501,6 +509,7 @@ We add this code at the bottom of the main module class `demovieworderhooks.php`
 and also add the missing `use` statements for new classes.
 
 ```php
+<?php
     /**
      * Displays customer's signature.
      */
@@ -533,7 +542,8 @@ The full main module file with dependencies could be:
 ```php
 <?php
 /**
- * 2007-2020 PrestaShop
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
  *
  * NOTICE OF LICENSE
  *

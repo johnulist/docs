@@ -22,8 +22,8 @@ It uses Basic access authentication to allow requests.
 
 **Resources:**
 
-* [About the webservice]({{< ref "1.7/development/webservice" >}})
-* [Enable & add users to the webservice]({{< ref "1.7/development/webservice/tutorials/creating-access" >}})
+* [About the webservice]({{< ref "1.7/webservice" >}})
+* [Enable & add users to the webservice]({{< ref "1.7/webservice/tutorials/creating-access" >}})
 
 **Adding a module ObjectModel to the list of resources available**
 
@@ -33,6 +33,7 @@ Then an array containing all the ressources (= Object Model subclasses) you want
 For instance, in the module blockreassurance we have an ObjectModel class, called `reassuranceClass`. If we wanted to make it available in the webservice, it would look like this:
 
 ```php
+<?php
 /**
  * Add an entity in the Webservice
  *

@@ -9,10 +9,15 @@ weight: 10
 Since version 1.7 of PrestaShop, everyone have access to the PrestaShop console using the following instruction in a terminal:
 
 ``
-./bin/console # or ./app/console for PrestaShop < 1.7.3
+./bin/console
 ``
 
 Since v1.7.5, you can add and provide your own commands into the PrestaShop console using modules.
+
+{{% notice warning %}}
+If you load and use PrestaShop Core legacy classes such as an ObjectModel within a Command context, you might run into issues. This is a known limitation of the Commands.
+Removing this limitation is being explored for future PS versions.
+{{% /notice %}}
 
 Let's see an example of a really common task when we usually use CRON scripts: you want to export your products into an XML file in order to import them into an another platform (a PIM or an ERP).
 
@@ -33,6 +38,7 @@ First you need to setup your composer file, you will find more info about it in 
 At this moment, the only requirement is that you PHP file needs to be a class that extends `Symfony\Component\Console\Command`. Let's create ExportCommand file:
 
 ```php
+<?php
 // your-module/src/Command/ExportCommand.php
 namespace YourCompany\YourModule\Command;
 

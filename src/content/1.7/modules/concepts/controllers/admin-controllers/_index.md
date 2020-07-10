@@ -9,6 +9,7 @@ weight: 3
 * Since 1.7.3 you create and override templates and services in your modules.
 * Since 1.7.4, you can create and override forms and console commands.
 * Since 1.7.5, you can create your own "modern" controllers!
+* Since 1.7.7, you can decorate Core controllers
 
 Starting on PrestaShop 1.7.5, you can rely on the modern environment to add new entry points to your applications.
 
@@ -17,16 +18,59 @@ Using modern pages, you will have access to the PrestaShop debug toolbar, the se
 ## How to declare a new Controller
 
 Somewhere in your module declare a new class that will act as a Controller:
-
 ```php
+<?php
 // modules/your-module/src/Controller/DemoController.php
 
+namespace MyModule\Controller;
+
+use Doctrine\Common\Cache\CacheProvider;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+
+class DemoController extends FrameworkBundleAdminController
+{
+    private $cache;
+       
+    // you can use symfony DI to inject services
+    public function __construct(CacheProvider $cache)
+    {
+        $this->cache = $cache;
+    }
+    
+    public function demoAction()
+    {
+        return $this->render('@Modules/your-module/templates/admin/demo.html.twig');
+    }
+}
+```
+
+If you want Symfony Dependency Injection to inject services into your controller, you need to use specific YAML service declaration:
+```
+services:
+  # The name of the service must match the full namespace class
+  MyModule\Controller\DemoController:
+    class: MyModule\Controller\DemoController
+    arguments:
+      - '@doctrine.cache.provider'
+```
+
+You can also retrieve services with the container available in symfony controllers ->
+```php
+<?php
+// modules/your-module/src/Controller/DemoController.php
+
+namespace MyModule\Controller;
+
+use Doctrine\Common\Cache\CacheProvider;
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
 
 class DemoController extends FrameworkBundleAdminController
 {
     public function demoAction()
     {
+        // you can also retrieve services directly from the container
+        $cache = $this->container->get('doctrine.cache');
+        
         return $this->render('@Modules/your-module/templates/admin/demo.html.twig');
     }
 }
@@ -46,6 +90,7 @@ You must enable the autoloading for this Controller. For example using a `compos
 1. Use namespace for your Controller file
 
     ```php
+    <?php
     // modules/your-module/src/Controller/DemoController.php
     
     namespace MyModule\Controller;
@@ -101,4 +146,27 @@ to separate classes and method names!
 Since Symfony 4.1 the bundle notation is going to be deprecated: https://symfony.com/blog/new-in-symfony-4-1-deprecated-the-bundle-notation
 {{% /notice %}}
 
-The Controller in the previous example will be available if you browse `/admin-dev/modules/your-module/demo`.
+The Controller in the previous example will now be available if you browse `/admin-dev/modules/your-module/demo`. Pay attention to this path: it starts with `/modules`.
+
+This is because all module routes are, by default, prefixed with `/modules`.
+
+### Disabling the prefix
+
+{{% minver v="1.7.7" title="true" %}}
+
+If however you need or wish your route not to be prefixed, you can use the `_disable_module_prefix` route option to disable the prefix introduced in [PrestaShop 1.7.7.0](https://github.com/PrestaShop/PrestaShop/pull/19782).
+
+```yaml
+# modules/your-module/config/routes.yml
+your_route_name:
+    path: your-module/demo
+    methods: [GET]
+    defaults:
+      _controller: 'MyModule\Controller\DemoController::demoAction'
+      _disable_module_prefix: true
+```
+
+
+## Secure your controller
+
+It is safer to define permissions required to use your controller, this can be configured using the `@AdminSecurity` annotation and some configuration in your routing file. You can read this documentation if you need more details about [Controller Security]({{< ref "/1.7/development/architecture/migration-guide/controller-routing.md#security" >}}).

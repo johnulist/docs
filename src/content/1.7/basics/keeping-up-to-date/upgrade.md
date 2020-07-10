@@ -66,7 +66,7 @@ Avoid overwrite the production resources (images, conf ...) with the
 default data. These folders can be removed from the new release:
 
 -   img/
--   overrides/
+-   override/
 
 All the other files present in the new release will overwrite the
 existing files. All changes you made on the original source code will be
@@ -307,7 +307,7 @@ Basically, the process and the result will be the same. The existing
 data on the shop will be kept, as well as your module and your current
 theme.
 
-You can subscribe for this service on the marketplace: https://addons.prestashop.com/en/support/18689-upgrade-pack-prestashop.html
+You can [subscribe for the upgrade service on the marketplace](https://addons.prestashop.com/en/support/18689-upgrade-pack-prestashop.html).
 
 Many agencies and freelancers in your area may also provide this kind of
 service.

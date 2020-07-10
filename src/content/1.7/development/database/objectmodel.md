@@ -16,6 +16,7 @@ You must use the `$definition` static variable in order to define the model.
 For instance:
 
 ```php
+<?php
 /**
  * Example from the CMS model (CMSCore)
  */
@@ -70,18 +71,21 @@ public static $definition = [
 In order to retrieve an object in many languages:
 
 ```php
+<?php
 'multilang' => true
 ```
 
 In order to retrieve an object depending on the current store:
 
 ```php
+<?php
 'multishop' => true
 ```
 
 In order to retrieve an object which depends on the current store, and in many languages:
 
 ```php
+<?php
 'multilang_shop' => true
 ```
 
@@ -144,11 +148,12 @@ validateFields($die = true, $errorReturn = false)
 
 Thanks to the hooks, you can alter the Object Model or execute functions during the lifecycle of your models. Every hook receive an instance of the manipulated object model:
 
-{{< figure src="../../img/object-model-lifecycle.png" title="ObjectModel lifecycle" width="100%" height="100%" >}}
+{{< figure src="../../img/object-model-lifecycle.png" title="ObjectModel lifecycle" >}}
 
 As an example, this is how you can retrieve information about a product when we delete it from the database:
 
 ```php
+<?php
 use Product;
 // In a module
 

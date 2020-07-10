@@ -24,7 +24,7 @@ The module created within this tutorial can be found [here](https://github.com/P
 
 - To be familiar with basic module creation.
 
-### Register hooks
+## Register hooks
 
 On module installation the following hooks are being registered:
 
@@ -35,6 +35,7 @@ On module installation the following hooks are being registered:
 - `actionAfterUpdate`**Customer**`FormHandler` - to execute the update process of added field from the module.
 
 ```php
+<?php
 public function install()
 {
     return parent::install() &&
@@ -59,17 +60,22 @@ in this case is **Customer** is retrieved from its form type **CustomerType**. E
 function `getBlockPrefix` to retrieve the unique id
 {{% /notice %}}
 
-### Adding new column to customers grid
+## Adding new column to customers grid
 
-#### Extending grid definition and filters
+### Extending grid definition and filters
 
 ```php
+<?php
 
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinitionInterface;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ToggleColumn;
 use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
 
-/**
+class Ps_DemoCQRSHooksUsage extends Module
+{
+    // ...
+    
+    /**
      * Hook allows to modify Customers grid definition.
      * This hook is a right place to add/remove columns or actions (bulk, grid).
      *
@@ -102,11 +108,14 @@ use PrestaShopBundle\Form\Admin\Type\YesAndNoChoiceType;
             ->setAssociatedColumn('is_allowed_for_review')
         );
     }
+    
+    // ...
+}
 ```
 This hook, through `$params` array, received `GridDefinition` that defines how the grid is rendered. See [Grid definition]({{< relref "/1.7/development/components/grid/_index.md#grid-definition" >}}) for more information.  
 In this sample a new toggable column which determines if the customer is eligible to review products is added just after another column which has id `optin`. The sample code also demonstrates how add new filter.
 
-#### Creating route for toggle column
+### Creating route for toggle column
 
 `ToggleColumn` - used to display booleans, it will display an icon instead of the value. If user clicks on it, this triggers a toggle of the boolean value. More information about this column and all available parameters can be found [here]({{< relref "/1.7/development/components/grid/columns-reference/toggle.md" >}}).  
 As in this sample module we are creating `ToggleColumn` we need to configure the route in which the toggling action will be performed. Indeed when the end-user clicks on this column, an ajax request is performed and must reach one new controller to handle the action (here: toggle a value on and off).  
@@ -115,6 +124,7 @@ If you only want to display data then this step can be skipped. E.g you are crea
 - Create controller `DemoCQRSHooksUsage\Controller\Admin\CustomerReviewController`:
 
 ```php
+<?php
 namespace DemoCQRSHooksUsage\Controller\Admin;
 
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
@@ -133,6 +143,7 @@ You can find full implementation [here](https://github.com/PrestaShop/demo-cqrs-
 {{% /notice %}}
 
 ```php
+<?php
 namespace DemoCQRSHooksUsage\Controller\Admin;
 
 use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
@@ -163,16 +174,22 @@ ps_democqrshooksusage_toggle_is_allowed_for_review:
 Route name `ps_democqrshooksusage_toggle_is_allowed_for_review` matches the one that was passed as mandatory option when creating the
 `ToggleColumn`. 
 
-#### Extending grid query builder
+### Extending grid query builder
 
 By just extending grid definition we won't be able to display any data since we need to fetch it first. Luckily, we can add additional sql
 conditions by extending [doctrine's query builder](https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/query-builder.html).
 
 ```php
+<?php
 use Doctrine\DBAL\Query\QueryBuilder;
 use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
 
-/**
+class Ps_DemoCQRSHooksUsage extends Module
+{
+
+    // ...
+
+    /**
      * Hook allows to modify Customers query builder and add custom sql statements.
      *
      * @param array $params
@@ -211,22 +228,24 @@ use PrestaShop\PrestaShop\Core\Search\Filters\CustomerFilters;
             }
         }
     }
-
+    
+    // ...
+}
 ```
 
 This sample demonstrates how to extend sql of the customers grid. From our custom database table `democqrshooksusage_reviewer` we fetch the result of field `is_allowed_for_review`. This name must match the id we added in the grid definition. In order for sorting to work we also add `orderBy` condition and finally, in order
 for filters to work `where` conditions are added if the filter exists in `$searchCriteria->getFilters()`.
 
-#### Result
+### Result
 
 After completing the steps above by going to customers list you should see new column "allowed for review" added.
 
 {{< figure src="../img/extended_customers_grid.png" title="Allowed for review column added to customers list" >}}
 
 
-### Adding new form field to customer form
+## Adding new form field to customer form
 
-#### Modifying customers form builder
+### Modifying customers form builder
 
 In this step we are appending to the customers form a new `SwitchType` form field - its one of many form types which already exist in PrestaShop. More information
 about it can be found [here]({{< relref "/1.7/development/components/form/types-reference/_index.md" >}}).
@@ -238,45 +257,54 @@ You can find full implementation [here](https://github.com/PrestaShop/demo-cqrs-
 {{% /notice %}}
 
 ```php
+<?php
 // modules/ps_democqrshooksusage/ps_democqrshooksusage.php
 
 use Symfony\Component\Form\FormBuilderInterface;
 use PrestaShopBundle\Form\Admin\Type\SwitchType;
 
-public function hookActionCustomerFormBuilderModifier(array $params)
+class Ps_DemoCQRSHooksUsage extends Module
 {
-    /** @var FormBuilderInterface $formBuilder */
-    $formBuilder = $params['form_builder'];
-    $formBuilder->add('is_allowed_for_review', SwitchType::class, [
-        'label' => $this->getTranslator()->trans('Allow reviews', [], 'Modules.Ps_DemoCQRSHooksUsage'),
-        'required' => false,
-    ]);
     
-    $customerId = $params['id'];
-    
-    $params['data']['is_allowed_for_review'] = $this->getIsAllowedForReview($customerId);
+    // ...
 
-    $formBuilder->setData($params['data']);
-}
+    public function hookActionCustomerFormBuilderModifier(array $params)
+    {
+        /** @var FormBuilderInterface $formBuilder */
+        $formBuilder = $params['form_builder'];
+        $formBuilder->add('is_allowed_for_review', SwitchType::class, [
+            'label' => $this->getTranslator()->trans('Allow reviews', [], 'Modules.Ps_DemoCQRSHooksUsage'),
+            'required' => false,
+        ]);
+
+        $customerId = $params['id'];
+
+        $params['data']['is_allowed_for_review'] = $this->getIsAllowedForReview($customerId);
+
+        $formBuilder->setData($params['data']);
+    }
+
+    private function getIsAllowedForReview($customerId)
+    {
+        // implement your data retrieval logic here
+
+        return true;
+    }
     
-private function getIsAllowedForReview($customerId)
-{
-    // implement your data retrieval logic here
-    
-    return true;
+    // ...
 }
 ```
 
 In this sample by using [Symfony form builder](https://symfony.com/doc/current/forms.html) we just added another Form type. To determine if its
 on or off we also need to reset its form data by assigning `is_allowed_for_review` value to `true` or `false`.
 
-#### Result
+### Result
 
 By completing the steps above newly added switch is now visible in the customers form.
 
 {{< figure src="../img/allow_for_review_switch.png" title="Allowed for review switch added to customers form" >}}
 
-### Extending customers form after create and update actions
+## Extending customers form after create and update actions
 
 In the previous example we have added a switch field ! But when we want to save its state (on or off) nothing happens. The data is not modified. This is because we have not used the hooks
 dedicated to handle this topic - lets do that!
@@ -288,6 +316,7 @@ You can find full implementation [here](https://github.com/PrestaShop/demo-cqrs-
 {{% /notice %}}
 
 ```php
+<?php
 
 public function hookActionAfterUpdateCustomerFormHandler(array $params)
 {
